@@ -155,7 +155,8 @@ class ProductController extends Controller {
         $id = $request->id;
 
         // Retrieve product details by ID
-        $product = Product::find($id);
+        //$product = Product::find($id);
+        $product = Product::with('category', 'subcategory')->find($id);
 
         // Retrieve product images details by ID
         $productImages = Product_images::where('product_id', $id)->get()->toArray();

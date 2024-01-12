@@ -11,7 +11,36 @@
         <link rel='stylesheet'
               href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css' />
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.10.25/datatables.min.css" />
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+</style>
     </head>
     <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="exampleModalLabel"
          data-bs-backdrop="static" aria-hidden="true">
@@ -45,7 +74,7 @@
                         <div class="my-2">
                             <label for="category">Category</label>
                             <!-- <input type="text" name="category" class="form-control" placeholder="Category" required> -->
-                            <select  id="country-dropdown" name="category_id" class="form-control">
+                            <select  id="country-dropdown" name="category_id" class="form-control" required>
                                 <option value="">-- Select Category --</option>
                                 @foreach ($categories as $data)
                                 <option value="{{$data->id}}">
@@ -56,7 +85,7 @@
                         </div>
                         <div class="my-2">
                             <label for="sub_category">Sub Category</label>            
-                            <select id="city-dropdown" name="sub_category_id" class="form-control"></select>
+                            <select id="city-dropdown" name="sub_category_id" class="form-control" required></select>
                         </div>
                         <div class="my-2">
                             <div class="col-md-2 input-group repeatDiv" id="repeatDiv">
@@ -158,6 +187,12 @@
     </div>
 
     <body class="bg-light">
+                <div class="topnav">
+        <a href="{{ route('dashboard') }}">Home</a>
+        <a href="{{ route('categories') }}">Categories</a>
+        <a class="active" href="{{ route('products') }}">Products</a>
+        <a href="{{ route('logout') }}">Logout</a>
+        </div>
         <div class="container">
             <div class="row my-5">
                 <div class="col-lg-12">
@@ -222,8 +257,11 @@
                       _token: '{{ csrf_token() }}'
               },
               success: function(response) {
+
               $("#product_name").val(response.product_name);
               $("#brand_name").val(response.brand_name);
+
+
               var avatarContainer = $("#files");
               avatarContainer.empty();
               response.product_images.forEach(function (imgVal) {

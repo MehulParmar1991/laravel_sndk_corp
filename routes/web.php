@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,22 @@ Route::group(['middleware' => 'admin'], function () {
     // Update the details of a specific product
     Route::get('edit', [ProductController::class, 'edit'])->name('edit');
     Route::post('/update', [ProductController::class, 'update'])->name('update');
+
+    // Display the list of categories
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories');
+
+    // Fetch the list of all products
+    Route::get('fetchallCategories', [CategoryController::class, 'fetchallCategories'])->name('fetchallCategories');
+
+    // Save a new category to the database
+    Route::post('storeCategory', [CategoryController::class, 'store'])->name('storeCategory');
+
+    // Update the details of a specific category
+    Route::get('editCategory', [CategoryController::class, 'edit'])->name('editCategory');
+    Route::post('/updateCategory', [CategoryController::class, 'update'])->name('updateCategory');
+
+    // View the details and edit a specific category
+    Route::delete('deleteCategory', [CategoryController::class, 'delete'])->name('deleteCategory');
 });
 
 // Group routes under the AdminController for managing administrative tasks
