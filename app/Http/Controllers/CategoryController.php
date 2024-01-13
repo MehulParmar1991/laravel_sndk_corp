@@ -25,8 +25,8 @@ class CategoryController extends Controller {
      * @return \Illuminate\View\View
      */
     public function index() {
-        $data['categories'] = Category::get(["name", "id"]);
-        return view('admin/categories.index', $data);
+        //$data['categories'] = Category::get(["name", "id"]);
+        return view('admin/categories.index');
     }
 
     /**
@@ -71,7 +71,7 @@ class CategoryController extends Controller {
     /**
      * Store a new category with associated details in the database.
      *
-     * Handles the creation and storage of a new product, including its image, additional
+     * Handles the creation and storage of a new category, including its image, additional
      * images, and details such as sizes, item prices, and discounted prices.
      *
      * @param \Illuminate\Http\Request $request
@@ -111,6 +111,12 @@ class CategoryController extends Controller {
         return response()->json($category);
     }
 
+    public function populateCategories(Request $request) {
+        $category = Category::all();
+
+        return response()->json($category);
+    }
+
     /**
      * Update category details in the database.
      *
@@ -120,7 +126,7 @@ class CategoryController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request) {
-        // Find the product record by ID
+        // Find the catgory record by ID
         $category = Category::find($request->emp_id);
 
         // Prepare data for updating the category record
@@ -128,7 +134,7 @@ class CategoryController extends Controller {
             'name' => $request->category_name
         ];
 
-        // Update the product record in the database
+        // Update the catgory record in the database
         $category->update($categoryData);
 
         // Respond with a JSON success message
@@ -144,11 +150,17 @@ class CategoryController extends Controller {
      * @return void
      */
     public function delete(Request $request) {
+         try {
         // Extract category ID from the request
         $id = $request->id;
 
         // Find the category record by ID
         $category = Category::find($id);
         Category::destroy($id);
+        return response()->json(['message' => 'Category deleted successfully']);
+         } catch (\Exception $e) {
+        // Handle the exception
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
     }
 }

@@ -47,6 +47,11 @@ Route::group(['middleware' => 'admin'], function () {
 
     // View the details and edit a specific category
     Route::delete('deleteCategory', [CategoryController::class, 'delete'])->name('deleteCategory');
+
+    Route::get('populateCategories', [CategoryController::class, 'populateCategories'])->name('populateCategories');
+
+    Route::post('deleteProductImage', [ProductController::class, 'deleteProductImage'])->name('deleteProductImage');
+    
 });
 
 // Group routes under the AdminController for managing administrative tasks

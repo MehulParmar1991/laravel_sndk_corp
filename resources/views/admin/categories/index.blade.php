@@ -76,7 +76,7 @@ body {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="#" method="POST" id="edit_employee_form" enctype="multipart/form-data">
@@ -113,8 +113,7 @@ body {
                         <div class="card-header bg-danger d-flex justify-content-between align-items-center">
                             <h3 class="text-light">Categories</h3>
                             <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i
-                                    class="bi-plus-circle me-2"></i>Add New Category</button>
-                            <a href="{{ route('logout') }}" class="btn btn-danger">Logout</a>    
+                                    class="bi-plus-circle me-2"></i>Add New Category</button>                                
                         </div>
                         <div class="card-body" id="show_all_employees">
                             <h1 class="text-center text-secondary my-5">Loading...</h1>
@@ -219,23 +218,32 @@ body {
               confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
       if (result.isConfirmed) {
-      $.ajax({
-      url: '{{ route('deleteCategory') }}',
-              method: 'delete',
-              data: {
-              id: id,
-                      _token: csrf
-              },
-              success: function(response) {
-              console.log(response);
-              Swal.fire(
-                      'Deleted!',
-                      'Your file has been deleted.',
-                      'success'
-                      )
-                      fetchallCategories();
-              }
-      });
+        $.ajax({
+            url: '{{ route('deleteCategory') }}',
+            method: 'delete',
+            data: {
+                id: id,
+                _token: csrf
+            },
+            success: function(response) {
+                console.log(response);
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Category has been deleted.',
+                    icon: 'success'
+                });
+                fetchallCategories();
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.log('Error removing category:', xhr.responseText);
+                Swal.fire({
+                    title: 'Error!',
+                    text: xhr.responseText,
+                    icon: 'error'
+                });
+            }
+        });
       }
       })
       });

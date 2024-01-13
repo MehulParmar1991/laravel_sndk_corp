@@ -54,14 +54,6 @@ body {
                     @csrf
                     <div class="modal-body p-4 bg-light">
                         <div class="row">
-                            <!--             <div class="col-lg">
-                                          <label for="fname">First Name</label>
-                                          <input type="text" name="fname" class="form-control" placeholder="First Name" required>
-                                        </div>
-                                        <div class="col-lg">
-                                          <label for="lname">Last Name</label>
-                                          <input type="text" name="lname" class="form-control" placeholder="Last Name" required>
-                                        </div> -->
                         </div>
                         <div class="my-2">
                             <label for="product_name">Product Name</label>
@@ -87,15 +79,32 @@ body {
                             <label for="sub_category">Sub Category</label>            
                             <select id="city-dropdown" name="sub_category_id" class="form-control" required></select>
                         </div>
-                        <div class="my-2">
+                        <!--<div class="my-2">
+                            <label for="product_attributes">Product Details</label>
                             <div class="col-md-2 input-group repeatDiv" id="repeatDiv">
-                                <input type="text" class="form-control" name="sizes[]" placeholder="Size">
-                                <input type="text" class="form-control" name="item_prices[]" placeholder="Item price">
-                                <input type="text" class="form-control" name="discounted_prices[]" placeholder="Discounted price">
+                                <input type="number" class="form-control" name="sizes[]" placeholder="Size">
+                                <input type="number" class="form-control" name="item_prices[]" placeholder="Item price">
+                                <input type="number" class="form-control" name="discounted_prices[]" placeholder="Discounted price">
                             </div>
                             <br>
                             <button type="button" class="btn btn-info" id="repeatDivBtn" data-increment="1">Add More</button>
+                        </div>-->
+                        <div class="my-2">
+                            <div class="form-group fieldGroup">
+                                <label for="product_attributes">Product Details</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" name="sizes[]" class="form-control" placeholder="Size"/>
+                                    <input type="text" name="item_prices[]" class="form-control" placeholder="Item price"/>
+                                    <input type="text" name="discounted_prices[]" class="form-control" placeholder="Discounted price"/>
+                                    <span class="input-group-text">
+                                        <a href="javascript:void(0);" class="btn btn-success addMore">
+                                            <i class="custicon plus"></i> Add
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="my-2">
                             <label for="post">Product Images</label>
                             <input type="file" name="files[]" class="form-control" placeholder="Post" required multiple>
@@ -130,14 +139,6 @@ body {
                     <input type="hidden" name="emp_avatar" id="emp_avatar">
                     <div class="modal-body p-4 bg-light">
                         <div class="row">
-                            <!--             <div class="col-lg">
-                                          <label for="fname">First Name</label>
-                                          <input type="text" name="fname" id="fname" class="form-control" placeholder="First Name" required>
-                                        </div>
-                                        <div class="col-lg">
-                                          <label for="lname">Last Name</label>
-                                          <input type="text" name="lname" id="lname" class="form-control" placeholder="Last Name" required>
-                                        </div> -->
                         </div>
                         <div class="my-2">
                             <label for="product_name">Product Name</label>
@@ -164,6 +165,16 @@ body {
                             <select id="city-dropdown" name="sub_category_id" class="form-control"></select>
                         </div>
                         <div class="my-2">
+                            <label for="product_attributes">Product Details</label>
+                            <div class="col-md-2 input-group repeatDiv" id="repeatDiv">
+                                <input type="text" class="form-control" name="sizes[]" placeholder="Size">
+                                <input type="text" class="form-control" name="item_prices[]" placeholder="Item price">
+                                <input type="text" class="form-control" name="discounted_prices[]" placeholder="Discounted price">
+                            </div>
+                            <br>
+                            <button type="button" class="btn btn-info" id="repeatDivBtn" data-increment="1">Add More</button>
+                        </div>
+                        <div class="my-2">
                             <label for="files">Product Images</label>
                             <input type="file" name="files[]" class="form-control" placeholder="Post" required multiple>
                         </div>
@@ -187,7 +198,7 @@ body {
     </div>
 
     <body class="bg-light">
-                <div class="topnav">
+        <div class="topnav">
         <a href="{{ route('dashboard') }}">Home</a>
         <a href="{{ route('categories') }}">Categories</a>
         <a class="active" href="{{ route('products') }}">Products</a>
@@ -201,7 +212,7 @@ body {
                             <h3 class="text-light">Products</h3>
                             <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i
                                     class="bi-plus-circle me-2"></i>Add New Product</button>
-                            <a href="{{ route('logout') }}" class="btn btn-danger">Logout</a>    
+                                
                         </div>
                         <div class="card-body" id="show_all_employees">
                             <h1 class="text-center text-secondary my-5">Loading...</h1>
@@ -216,7 +227,37 @@ body {
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
       $(function() {
+         var selectedCategoryId = {{ $selectedCategoryId ?? 'null' }};
+         populateCategories(selectedCategoryId);
+         function populateCategories(selectedCategoryId) {
+            // Make an Ajax request to fetch categories
+            $.ajax({
+                url: '{{ route('populateCategories') }}',
+                type: 'GET',
+                success: function(response) {
+                    // Populate the category dropdown with fetched data using Blade
+                    var dropdown = $('#country-dropdown');
+                    dropdown.empty();
+                    
+                    dropdown.append('<option value="">-- Select Category --</option>');
+                    @foreach ($categories as $data)
+                        dropdown.append('<option value="{{$data->id}}">{{$data->name}}</option>');
+                    @endforeach
 
+                    if (selectedCategoryId) {
+                        dropdown.val(selectedCategoryId);
+                    } else {
+                        // If no selected category ID provided, set the default value
+                        // For example, set a random category as selected
+                        //var randomIndex = Math.floor(Math.random() * response.length);
+                        //dropdown.val(response[randomIndex].id);
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
       // add new employee ajax request
       $("#add_employee_form").submit(function(e) {
       e.preventDefault();
@@ -260,18 +301,20 @@ body {
 
               $("#product_name").val(response.product_name);
               $("#brand_name").val(response.brand_name);
-
-
+              //alert(response.category_id)
+              //populateCategories(response.category_id);
               var avatarContainer = $("#files");
               avatarContainer.empty();
-              response.product_images.forEach(function (imgVal) {
-                var imagUrl = response.id + '/'+ imgVal
+
+              var productImagesString = JSON.stringify(response.product_images);
+              var productImages = JSON.parse(productImagesString);
+              productImages.forEach(function (imgVal) {
+                var imagUrl = response.id + '/'+ imgVal.image;
+                var productImagId = response.id + '/'+ imgVal.id;                
                 avatarContainer.append(
-                    `<img src="storage/images/${imagUrl}" width="100" class="img-fluid img-thumbnail">`
+                    `<div><img src="storage/images/${imagUrl}" width="100" class="img-fluid img-thumbnail"><button type="button" class="btn btn-danger remove-button" data-id="${productImagId}"><i class="bi bi-trash"></i></button></div>`
                );
-              });    
-              //$("#files").html(
-              //        `<img src="storage/images/${response.avatar}" width="100" class="img-fluid img-thumbnail">`);
+              });
               $("#avatar").html(
                       `<img src="storage/images/${response.avatar}" width="100" class="img-fluid img-thumbnail">`);
               $("#emp_id").val(response.id);
@@ -279,6 +322,34 @@ body {
               }
       });
       });
+
+    var avatarContainer = $("#files");
+    avatarContainer.on('click', '.remove-button', function () {
+        var productImageId = $(this).data('id');
+        console.log('Remove button clicked for image with ID: ' + productImageId);
+        // Add your logic for image removal here using the captured productImageId
+        // For example, you can use an AJAX request to remove the image from the server
+        $.ajax({
+            url: '{{ route('deleteProductImage') }}',
+            method: 'post',
+            data: {
+                id: productImageId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                // Handle success response
+                console.log('Image removed successfully.');
+            },
+            error: function(error) {
+                // Handle error response
+                console.log('Error removing image: ' + error);
+            }
+        });
+
+        // Remove the image element from the DOM
+        $(this).closest('div').remove();
+      });
+
       // update employee ajax request
       $("#edit_employee_form").submit(function(e) {
       e.preventDefault();
@@ -342,26 +413,28 @@ body {
       }
       })
       });
+
       $('#country-dropdown').on('change', function () {
-      var idCountry = this.value;
-      $("#city-dropdown").html('');
-      $.ajax({
-      url: "{{url('api/fetch-cities')}}",
-              type: "POST",
-              data: {
-              category_id: idCountry,
-                      _token: '{{csrf_token()}}'
-              },
-              dataType: 'json',
-              success: function (result) {
-              $('#city-dropdown').html('<option value="">-- Select Sub Category --</option>');
-              $.each(result.sub_categories, function (key, value) {
-              $("#city-dropdown").append('<option value="' + value
-                      .id + '">' + value.name + '</option>');
-              });
-              }
+        var idCountry = this.value;
+        $("#city-dropdown").html('');
+          $.ajax({
+          url: "{{url('api/fetch-cities')}}",
+                  type: "POST",
+                  data: {
+                  category_id: idCountry,
+                          _token: '{{csrf_token()}}'
+                  },
+                  dataType: 'json',
+                  success: function (result) {
+                  $('#city-dropdown').html('<option value="">-- Select Sub Category --</option>');
+                  $.each(result.sub_categories, function (key, value) {
+                  $("#city-dropdown").append('<option value="' + value
+                          .id + '">' + value.name + '</option>');
+                  });
+                  }
+          });
       });
-      });
+
       // fetch all employees ajax request
       fetchAllEmployees();
       function fetchAllEmployees() {
@@ -377,26 +450,16 @@ body {
       });
       }
 
-      $("#repeatDivBtn").click(function () {
+        // Add more group of input fields
+        $(".addMore").click(function(){
+            var html = '<div class="input-group mb-3"><input type="text" name="sizes[]" class="form-control" placeholder="Size"/><input type="text" name="item_prices[]" class="form-control" placeholder="Item price"/><input type="text" name="discounted_prices[]" class="form-control" placeholder="Discounted price"/><span class="input-group-text"><a href="javascript:void(0);" class="btn btn-danger remove"><i class="custicon minus"></i> Remove</a></span></div>';
 
-      $newid = $(this).data("increment");
-      $repeatDiv = $("#repeatDiv").wrap('<div/>').parent().html();
-      $('#repeatDiv').unwrap();
-      $($repeatDiv).insertAfter($(".repeatDiv").last());
-      $(".repeatDiv").last().attr('id', "repeatDiv" + '_' + $newid);
-      $("#repeatDiv" + '_' + $newid).append('<div class="input-group-append"><button type="button" class="btn btn-danger removeDivBtn" data-id="repeatDiv' + '_' + $newid + '">Remove</button></div><br>');
-      $newid++;
-      $(this).data("increment", $newid);
-      });
-      $(document).on('click', '.removeDivBtn', function () {
-
-      $divId = $(this).data("id");
-      $("#" + $divId).remove();
-      $inc = $("#repeatDivBtn").data("increment");
-      $("#repeatDivBtn").data("increment", $inc - 1);
-      });
+            $(".fieldGroup").last().after(html);
+        });
+        $(document).on('click', '.remove', function(){
+            $(this).closest('.input-group').remove();
+        });
       });
         </script>
     </body>
-
 </html>

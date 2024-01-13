@@ -159,8 +159,10 @@ class ProductController extends Controller {
         $product = Product::with('category', 'subcategory')->find($id);
 
         // Retrieve product images details by ID
-        $productImages = Product_images::where('product_id', $id)->get()->toArray();
-        $product->product_images = array_column($productImages, 'image');
+        $productImages = Product_images::where('product_id', $id)->get();
+        $product->product_images = $productImages;//array_column($productImages, 'image');
+        //$product->product_image_ids = array_column($productImages, 'id');
+        $product->categories = Category::all();
         // Return product details in JSON format
         return response()->json($product);
     }
@@ -239,5 +241,16 @@ class ProductController extends Controller {
         if (Storage::delete('public/images/' . $product->avatar)) {
             Product::destroy($id);
         }
+    }
+
+    public function deleteProductImage(Request $request) {
+        // Extract product Image ID from the request        
+        $product_image_id = explode('/', $request->id);
+        $product_image_id = $product_image_id[1];
+        // Delete additional product image
+        $query = Product_images::where('id', $product_image_id)->delete();
+        return response()->json([
+                    'status' => 200,
+        ]);
     }
 }
